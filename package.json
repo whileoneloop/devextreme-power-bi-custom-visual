@@ -1,0 +1,9 @@
+{
+  "name": "visual",
+  "dependencies": {
+    "@types/jquery": "2.0.48",
+    "devextreme": "^17.1.5",
+    "jquery": "2.2.4",
+    "powerbi-visuals-utils-dataviewutils": "1.2.0"
+  }
+}
