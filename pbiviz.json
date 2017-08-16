@@ -18,6 +18,7 @@
     "icon": "assets/icon.png"
   },
   "externalJS": [
+    "src/window.js",
     "node_modules/powerbi-visuals-utils-dataviewutils/lib/index.js",
     "node_modules/jquery/dist/jquery.min.js",
     "src/initJquery.js",

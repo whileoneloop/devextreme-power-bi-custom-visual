@@ -4,27 +4,46 @@ This repo uses the trial version of DevExpress components, which was added with:
 
     npm install --save devextreme
 
-#### Please note: the component is throwing the following exception when contained within the PowerBI 'visualsandbox':
+#### "ReferenceError: DevExpress is not defined", solved via src/window.js , which adjusts the window object ahead of loading the DevExpress component - to solve the exception "DevExpress is undefined".
 
-    Uncaught ReferenceError: DevExpress is not defined
-    at Object.<anonymous> (<anonymous>:551:13589)
-    at t (<anonymous>:546:120)
-    at Object.window.DevExpress (<anonymous>:546:1644)
-    at t (<anonymous>:546:120)
-    at Object.<anonymous> (<anonymous>:546:450)
-    at t (<anonymous>:546:120)
-    at Object.<anonymous> (<anonymous>:546:341)
-    at t (<anonymous>:546:120)
-    at Object.<anonymous> (<anonymous>:546:306)
-    at t (<anonymous>:546:120)
+    // adapted from ignatvilesov's advice:
+    // https://github.com/whileoneloop/kendo-ui-power-bi-visual/commit/0f6ef60c390f82cf24a3edb34c4572fd01d66d7d
 
-This may be related to issues reported using external libraries with PowerBI:
+    Object.defineProperties(window, {
+        'devicePixelRatio': {
+            get: function () {
+                return window.window.devicePixelRatio;
+            }
+        },
+        'innerWidth': {
+            get: function () {
+                return window.window.innerWidth;
+            }
+        }
+    });
 
-1. https://github.com/Microsoft/PowerBI-visuals/issues/163
-1. https://github.com/Microsoft/PowerBI-visuals/issues/217
-1. https://github.com/Microsoft/PowerBI-visuals/issues/165
+    var DevExpress = { };
+    window.DevExpress = DevExpress;
+    window.window.DevExpress = DevExpress;
 
-#### How to reproduce:
+#### Note on use of fonts
+
+Fonts have been converted to base64 to allow them to be embedded in the custom visual package.
+
+This can be done with:
+
+    base64 dxicons.ttf > dxicons_ttf_base64.txt
+
+And then modifying the css file:
+
+    @font-face {
+        font-family: 'DXIcons';
+        src: url(data:font/woff;charset=utf-8;base64,<<woff base64 string>>) format('woff'), url(data:font/truetype;charset=utf-8;base64,<<ttf base64 string>>) format('truetype');    
+        font-weight: normal;
+        font-style: normal;
+    }
+
+#### How to run:
 
 Start a PowerBI pro free trial if not already done:
 
@@ -46,7 +65,7 @@ Then run a dev instance for PowerBI to connect to and display the visual:
 
     pbiviz package
 
-Login to PowerBI, enable developer custom visuals, create a new report, drag on a developer/custom visual widget.  View the console output in the browser window displaying your developer visual, the "DevExpress is not defined" exception should be present.
+Login to PowerBI, enable developer custom visuals, create a new report, drag on a developer/custom visual widget.  View the console output in the browser window displaying your developer visual.
 
 #### Other resources:
 
